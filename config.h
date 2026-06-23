@@ -2,13 +2,17 @@
 // Standard headers
 #include <string>
 
+// menu
+const char MENU_TOP = '-';
+const char MENU_SIDE = '|';
+
 // game settings
-const int ALIEN_MAX_N = 500;
+const int ALIEN_MAX_N = 0;
 const int MAXIMUM_CYLES = 10000;
 
 // map 
-const int MAP_N_X = 10;
-const int MAP_N_Y = 40;
+const int MAP_N_X = 20;
+const int MAP_N_Y = 80;
 
 // game_engine
 const float POSITION_TOL = 1.0;
@@ -29,6 +33,8 @@ const char SHOOT_FORWARD = 'i';
 const char SHOOT_BACKWARD = 'k';
 const char SHOOT_LEFT = 'j';
 const char SHOOT_RIGHT = 'l';
+const char PAUSE = 'p'; 
+const char CONFIRM = 'b';
 const char QUIT = 'q';
 
 // character

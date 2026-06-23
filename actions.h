@@ -8,6 +8,8 @@
 
 struct PlayerAction {
     bool quit = false;
+    bool pause = false;
+    bool confirm = false;
     bool shoot_forward = false;
     bool shoot_backward = false;
     bool shoot_left = false;
@@ -17,7 +19,7 @@ struct PlayerAction {
     
 };
 
-PlayerAction action_function(char key_pressed) {
+PlayerAction action_function(char key_pressed, bool pause) {
     PlayerAction player_action;
 
     switch (key_pressed) {
@@ -45,9 +47,18 @@ PlayerAction action_function(char key_pressed) {
         case SHOOT_RIGHT:
             player_action.shoot_right = true;
             break;
+        case PAUSE:
+            player_action.pause = true;
+            break;
+        case CONFIRM:
+            player_action.confirm = true;
+            break;
         case QUIT:
             player_action.quit = true;
             break;
         }
+    if (pause) {
+        player_action.pause = pause;
+    }
     return player_action;
 }

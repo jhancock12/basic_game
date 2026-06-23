@@ -12,6 +12,7 @@
 // My headers
 #include "config.h"
 #include "map.h"
+// #include "pause_menu.h"
 #include "entity_type.h"
 #include "bullet_type.h"
 
@@ -25,17 +26,19 @@ private:
 
 public:
     int high_score;
+    float fps;
     std::pair<int, int> dimensions;
     Character character;
     std::vector<Alien> aliens;
     std::vector<Bullet> bullets;
     
-    GameEngine(const std::string& name_ = "Jim", int high_score_ = 0) :
-        high_score(high_score_),
+    GameEngine(const std::string& name_ = "Jim") :
         player_name(name_),
         map(),
         character(name_)
     {
+        high_score = 0;
+        fps = 0.0;
         dimensions = map.get_dimensions();
         character.set_position(dimensions.first - 2, dimensions.second - 2);
     }
@@ -46,6 +49,14 @@ public:
 
     int get_score() {
         return character.get_score();
+    }
+
+    void set_high_score(int high_score_) {
+        high_score = high_score_;
+    }
+
+    void set_fps(float fps_) {
+        fps = fps_;
     }
 
     void clear_screen() {
@@ -78,6 +89,39 @@ public:
         std::cout << frame << std::endl;
         std::cout << player_name << " health: " << character.get_health() << " | " << player_name << " score: " << character.get_score() << std::endl;
         std::cout << "Highscore: " << high_score << std::endl;
+        std::cout << "FPS: " << fps << std::endl;
+    }
+
+    std::string get_display() {
+        std::pair<float, float> character_position = character.get_position();
+
+        Entity character_entity{ character.get_icon().icon, static_cast<int>(std::round(character_position.first)), static_cast<int>(std::round(character_position.second)) };
+
+        std::vector<Entity> entities;
+        entities.push_back(character_entity);
+
+        for (const Bullet& bullet : bullets) {
+            Entity bullet_entity{ bullet.icon, static_cast<int>(std::round(bullet.position_x)), static_cast<int>(std::round(bullet.position_y)) };
+            entities.push_back(bullet_entity);
+        }
+
+        for (Alien& alien : aliens) {
+            std::pair<float, float> alien_position = alien.get_position();
+            Entity alien_entity{ alien.get_icon().icon, static_cast<int>(std::round(alien_position.first)), static_cast<int>(std::round(alien_position.second)) };
+            entities.push_back(alien_entity);
+        }
+
+        std::string frame = map.display(entities);
+        frame = frame + "\n" + player_name + " health: " + std::to_string(character.get_health()) + " | " + player_name + " score: " + std::to_string(character.get_score());
+        frame = frame + "\n" + "Highscore: " + std::to_string(high_score);
+        frame = frame + "\n" + "FPS: " + std::to_string(fps);
+
+        return frame;
+    }
+
+    void display_pause(std::string frame) {
+        clear_screen();
+        std::cout << frame << std::endl;
     }
 
     void update_player_position(float move_x, float move_y) {
