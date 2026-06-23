@@ -12,12 +12,12 @@
 // My headers
 #include "config.h"
 #include "map.h"
-// #include "pause_menu.h"
 #include "entity_type.h"
 #include "bullet_type.h"
 
 #include "alien.h"
 #include "character.h"
+#include "asteroid.h"
 
 class GameEngine {
 private:
@@ -31,6 +31,7 @@ public:
     Character character;
     std::vector<Alien> aliens;
     std::vector<Bullet> bullets;
+    std::vector<AsteroidGroup> asteroids;
     
     GameEngine(const std::string& name_ = "Jim") :
         player_name(name_),
@@ -74,6 +75,14 @@ public:
         std::vector<Entity> entities;
         entities.push_back(character_entity);
 
+        for (int j = 0; j < asteroids.size(); ++j) {
+            for (Asteroid& asteroid : asteroids[j].asteroid_list) {
+                std::pair<float, float> asteroid_position = asteroid.get_position();
+                Entity asteroid_entity{ asteroid.get_icon().icon, static_cast<int>(std::round(asteroid_position.first)), static_cast<int>(std::round(asteroid_position.second)) };
+                entities.push_back(asteroid_entity);
+            }
+        }
+
         for (const Bullet& bullet : bullets) {
             Entity bullet_entity{ bullet.icon, static_cast<int>(std::round(bullet.position_x)), static_cast<int>(std::round(bullet.position_y)) };
             entities.push_back(bullet_entity);
@@ -99,6 +108,14 @@ public:
 
         std::vector<Entity> entities;
         entities.push_back(character_entity);
+
+        for (int j = 0; j < asteroids.size(); ++j) {
+            for (Asteroid& asteroid : asteroids[j].asteroid_list) {
+                std::pair<float, float> asteroid_position = asteroid.get_position();
+                Entity asteroid_entity{ asteroid.get_icon().icon, static_cast<int>(std::round(asteroid_position.first)), static_cast<int>(std::round(asteroid_position.second)) };
+                entities.push_back(asteroid_entity);
+            }
+        }
 
         for (const Bullet& bullet : bullets) {
             Entity bullet_entity{ bullet.icon, static_cast<int>(std::round(bullet.position_x)), static_cast<int>(std::round(bullet.position_y)) };
@@ -189,6 +206,34 @@ public:
         
     }
 
+    void add_asteroid_group(float position_x, float position_y, float velocity_x, float velocity_y, int size) {
+        AsteroidGroup asteroid_group;
+        int j = 0;
+        int k = 0;
+        int counter = 0;
+        while (j + k < size) {
+            if (counter % 2 == 0) {
+                j += 1;
+            }
+            else {
+                k += 1;
+            }
+            asteroid_group.asteroid_list.push_back(Asteroid(position_x + j, position_y + k, velocity_x, velocity_y));
+            counter += 1;
+        }
+        asteroids.push_back(asteroid_group);
+    }
+
+    void update_asteroid_position() {
+        for (int j = 0; j < asteroids.size(); ++j) {
+            for (Asteroid& asteroid : asteroids[j].asteroid_list) {
+                std::pair<float, float> asteroid_position = asteroid.get_position();
+                std::pair<float, float> asteroid_velocity = asteroid.get_velocity();
+                asteroid.change_position(asteroid_velocity.first, asteroid_velocity.second);
+            }
+        }
+    }
+
     void add_character_bullet(bool shoot_forward, bool shoot_backward, bool shoot_left, bool shoot_right) {
         if (shoot_forward or shoot_backward or shoot_left or shoot_right) {
             std::pair<float, float> character_position = character.get_position();
@@ -256,6 +301,19 @@ public:
                 }
             }
 
+            for (int asteroid_index = 0; asteroid_index < asteroids.size(); ++asteroid_index) {
+                for (Asteroid& asteroid : asteroids[asteroid_index].asteroid_list) {
+                    std::pair<float, float> asteroid_position = asteroid.get_position();
+                    if ((abs(bullets[bullet_index].position_x + bullets[bullet_index].velocity_x - asteroid_position.first) < POSITION_TOL) and (abs(bullets[bullet_index].position_y + bullets[bullet_index].velocity_y - asteroid_position.second) < POSITION_TOL)) {
+                        if (bullets[bullet_index].friendly) {
+                            asteroids[asteroid_index].health -= bullets[bullet_index].damage;
+                            hit = true;
+                        }
+                    }
+                }
+            }
+
+
             if (!hit) {
                 if (map.is_walkable(static_cast<int>(std::round(bullets[bullet_index].position_x + bullets[bullet_index].velocity_x)), static_cast<int>(std::round(bullets[bullet_index].position_y + bullets[bullet_index].velocity_y)))) {
                     bullets[bullet_index].position_x += bullets[bullet_index].velocity_x;
@@ -292,4 +350,33 @@ public:
         }
     }
 
+    void check_asteroid_health_position() {
+        std::vector<AsteroidGroup> left_overs;
+        int score_ = 0;
+        for (int j = 0; j < asteroids.size(); ++j) {
+            AsteroidGroup asteroid_group = asteroids[j];
+            if (asteroid_group.health > 0) {
+                AsteroidGroup asteroid_group_new;
+                for (Asteroid& asteroid : asteroid_group.asteroid_list) {
+                    std::pair<float, float> asteroid_position = asteroid.get_position();
+                    std::pair<float, float> asteroid_velocity = asteroid.get_velocity();
+                    if (map.is_walkable(static_cast<int>(std::round(asteroid_position.first + asteroid_velocity.first)), static_cast<int>(std::round(asteroid_position.second + asteroid_velocity.second)))) {
+                        asteroid_group_new.asteroid_list.push_back(asteroid);
+                    }
+                }
+                left_overs.push_back(asteroid_group_new);
+            }
+            else {
+                score_ += 1;
+                // Split up the asteroid
+                std::pair<float, float> asteroid_position = asteroids[j].asteroid_list[0].get_position();
+                std::pair<float, float> asteroid_velocity = asteroids[j].asteroid_list[0].get_velocity();
+                add_asteroid_group(asteroid_position.first, asteroid_position.second, asteroid_velocity.first, asteroid_velocity.second, static_cast<int>(asteroids[j].asteroid_list.size() / 2));
+                add_asteroid_group(asteroid_position.first, asteroid_position.second, -asteroid_velocity.first, asteroid_velocity.second, static_cast<int>(asteroids[j].asteroid_list.size() / 2));
+            }
+        }
+        character.change_score(score_);
+        asteroids = left_overs;
+
+    }
 };

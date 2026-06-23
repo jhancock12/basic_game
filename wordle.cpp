@@ -3,6 +3,7 @@
 #include <thread>
 #include <chrono>
 #include <fstream>
+#include <random>
 
 #include "config.h"
 #include "pause_menu.h"
@@ -10,11 +11,16 @@
 #include "game_engine.h"
 
 // Things to do:
-// Pause menu - Maybe change settings from there?
-// Make prettier stuff w/ more pixels, and zoom out
+// ASTEROIDS!!! Make them in groups (AsteroidGroup) which then break up and let them fly off screen!
 
 int main()
 {
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> position_dist(0.1, 0.9);   // adjust to your map bounds
+    std::uniform_real_distribution<float> direction_dist(-0.4, 0.4);
+
     std::string name_;
     std::cout << "Enter your name:" << std::endl;
     std::cin >> name_;
@@ -67,6 +73,17 @@ int main()
         }
         else {
             if (cycle % 2 == 0) {
+
+                if (cycle % 50 == 0) {
+                    float start_x = position_dist(gen) * (MAP_N_X);
+                    float start_y = position_dist(gen) * (MAP_N_Y);
+                    float velocity_x = direction_dist(gen);
+                    float velocity_y = direction_dist(gen);
+                    game_engine.add_asteroid_group(start_x, start_y, velocity_x, velocity_y, cycle % 7);
+                }
+
+                game_engine.update_asteroid_position(); // Need to be drawn
+
                 aliens_n = game_engine.get_n_aliens();
                 if ((aliens_n < ALIEN_MAX_N) and (cycle % 5 == 0)) {
                     game_engine.add_alien((cycle + 10) % (dimensions.first - 2) + 1, (cycle + 10) % (dimensions.second - 2) + 1);
@@ -107,6 +124,9 @@ int main()
                 std::cout << "!!!YOU DIED GAME OVER!!!";
                 stop = true;
             }
+
+            // Checking asteroids
+            game_engine.check_asteroid_health_position();
 
             // Book keeping
             std::this_thread::sleep_for(std::chrono::milliseconds(5)); // Tick rate

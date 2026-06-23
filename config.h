@@ -11,8 +11,8 @@ const int ALIEN_MAX_N = 0;
 const int MAXIMUM_CYLES = 10000;
 
 // map 
-const int MAP_N_X = 20;
-const int MAP_N_Y = 80;
+const int MAP_N_X = 50;
+const int MAP_N_Y = 100;
 
 // game_engine
 const float POSITION_TOL = 1.0;
@@ -23,6 +23,13 @@ const float ALIEN_VELOCITY_X = 0.0;
 const float ALIEN_VELOCITY_Y = 2.0;
 const int ALIEN_HEALTH = 1;
 const int ALIEN_VALUE = 1;
+
+// asteroid
+const char	ASTEROID_ICON = '@';
+const float ASTEROID_VELOCITY_X = 0.1;
+const float ASTEROID_VELOCITY_Y = 0.1;
+const int ASTEROID_HEALTH = 1;
+const int ASTEROID_VALUE = 1;
 
 // actions
 const char FORWARD = 'w';
