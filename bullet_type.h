@@ -2,14 +2,15 @@
 // Standard headers
 
 // My headers
+#include "config.h"
 
 struct Bullet {
     // Defaults to upwards moving
-    char icon = '*';
-    int loc_x = 0;
-    int loc_y = 0;
-    int direction_x = -1;
-    int direction_y = 0;
-
-    int damage = 1;
+    char icon = BULLET_ICON;
+    int damage = BULLET_DAMAGE;
+    float velocity_x;
+    float velocity_y;
+    float position_x;
+    float position_y;
+    bool friendly;
 };

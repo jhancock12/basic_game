@@ -6,36 +6,37 @@
 #include <utility>
 
 // My headers
+#include "config.h"
 #include "cell_type.h"
 
 class Character {
 private:
-    const std::string name;
+    std::string name;
 
 public:
-    int loc_x;
-    int loc_y;
+    Cell player_icon;
+    float position_x;
+    float position_y;
     int health;
     int score;
-    Cell player_icon;
     
-    Character(const std::string& name_ = "Jim") :
+    Character(const std::string& name_) :
         name(name_)
     {
-        player_icon.icon = 'K';
+        player_icon.icon = PLAYER_ICON;
         player_icon.walkable = false;
-        loc_x = 1;
-        loc_y = 1;
-        health = 1;
+        health = PLAYER_HEALTH;
         score = 0;
+        position_x = 1.0;
+        position_y = 1.0;
     }
 
     std::string get_name() {
         return name;
     }
 
-    std::pair<int, int> get_location() {
-        return { loc_x, loc_y };
+    std::pair<float, float> get_position() {
+        return { position_x, position_y };
     }
 
     Cell get_icon() {
@@ -50,14 +51,14 @@ public:
         return score;
     }
 
-    void set_location(int new_x, int new_y) {
-        loc_x = new_x;
-        loc_y = new_y;
+    void set_position(float new_x, float new_y) {
+        position_x = new_x;
+        position_y = new_y;
     }
 
-    void change_location(int move_x, int move_y) {
-        loc_x += move_x;
-        loc_y += move_y;
+    void change_position(float move_x, float move_y) {
+        position_x += move_x;
+        position_y += move_y;
     }
 
     void change_score(int score_) {

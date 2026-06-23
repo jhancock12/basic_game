@@ -54,7 +54,7 @@ private:
 
    
 public:
-    Map(int n_x_ = 20, int n_y_ = 100) :
+    Map(int n_x_ = MAP_N_X, int n_y_ = MAP_N_Y) :
         n_x(n_x_),
         n_y(n_y_)
     {
@@ -81,7 +81,7 @@ public:
         std::vector<char> map_print_ = map_print;
 
         for (int entity_index = 0; entity_index < entities.size(); ++entity_index) {
-            map_print_[index(entities[entity_index].loc_x, entities[entity_index].loc_y)] = entities[entity_index].icon;
+            map_print_[index(entities[entity_index].position_x, entities[entity_index].position_y)] = entities[entity_index].icon;
         }
 
         std::string frame = "";

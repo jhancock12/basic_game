@@ -1,0 +1,48 @@
+#pragma once
+// Standard headers
+#include <string>
+
+// game settings
+const int ALIEN_MAX_N = 500;
+const int MAXIMUM_CYLES = 10000;
+
+// map 
+const int MAP_N_X = 10;
+const int MAP_N_Y = 40;
+
+// game_engine
+const float POSITION_TOL = 1.0;
+
+// alien
+const char ALIEN_ICON = 'J';
+const float ALIEN_VELOCITY_X = 0.0;
+const float ALIEN_VELOCITY_Y = 2.0;
+const int ALIEN_HEALTH = 1;
+const int ALIEN_VALUE = 1;
+
+// actions
+const char FORWARD = 'w';
+const char BACKWARD = 's';
+const char LEFT = 'a';
+const char RIGHT = 'd';
+const char SHOOT_FORWARD = 'i';
+const char SHOOT_BACKWARD = 'k';
+const char SHOOT_LEFT = 'j';
+const char SHOOT_RIGHT = 'l';
+const char QUIT = 'q';
+
+// character
+const std::string PLAYER_NAME = "Jim";
+const char PLAYER_ICON = 'K';
+const int PLAYER_HEALTH = 1000;
+
+// cell_type
+const char CELL_ICON = ' ';
+
+// bullet_type
+const char BULLET_ICON = '*';
+const int BULLET_DAMAGE = 1;
+
+// entity_type 
+const char ENTITY_ICON = '.';
+

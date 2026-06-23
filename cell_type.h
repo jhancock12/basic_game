@@ -2,8 +2,9 @@
 // Standard headers
 
 // My headers
+#include "config.h"
 
 struct Cell {
-    char icon = '.';
-    bool walkable = true;
+    char icon = CELL_ICON;
+    bool walkable;
 };

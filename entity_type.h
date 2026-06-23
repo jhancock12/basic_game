@@ -2,10 +2,11 @@
 // Standard headers
 
 // My headers
+#include "config.h"
 
 struct Entity {
-    char icon = '.';
-    int loc_x = 0;
-    int loc_y = 0;
+    char icon = ENTITY_ICON;
+    int position_x;
+    int position_y;
 };
 
